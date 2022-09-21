@@ -158,7 +158,7 @@ with block:
                 )
 
                 btn = gr.Button("Transcribe")
-        text = gr.Textbox()
+        text = gr.Textbox(show_label=False)
         
 
 
