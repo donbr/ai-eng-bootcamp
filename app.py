@@ -155,6 +155,7 @@ with block:
                 audio = gr.Audio(
                     label="Input Audio",
                     show_label=False,
+                    type="filepath"
                 )
 
                 btn = gr.Button("Transcribe")
