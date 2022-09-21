@@ -104,7 +104,7 @@ with block:
  
         gr.HTML('''
         <div class="footer">
-                    <p>Model by <a href="https://github.com/openai/whisper" style="text-decoration: underline;" target="_blank">OpenAI</a> and <a href="https://wenxin.baidu.com" style="text-decoration: underline;" target="_blank">文心大模型</a> - Gradio Demo by 🤗 Hugging Face
+                    <p>Model by <a href="https://github.com/openai/whisper" style="text-decoration: underline;" target="_blank">OpenAI</a> - Gradio Demo by 🤗 Hugging Face
                     </p>
         </div>
         ''')
