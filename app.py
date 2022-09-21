@@ -95,8 +95,7 @@ with block:
                 )
 
                 btn = gr.Button("Transcribe")
-        text = gr.Textbox(
-        ).style(height="auto")
+        text = gr.Textbox()
         
 
 
