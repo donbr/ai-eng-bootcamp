@@ -92,15 +92,9 @@ with block:
                 audio = gr.Audio(
                     label="Input Audio",
                     show_label=False,
-                ).style(
-                    rounded=(True, False, False, True),
-                    container=False,
                 )
 
-                btn = gr.Button("Transcribe").style(
-                    margin=False,
-                    rounded=(False, True, True, False),
-                )
+                btn = gr.Button("Transcribe")
         text = gr.Textbox(
         ).style(height="auto")
         
