@@ -38,17 +38,7 @@ css = """
             margin: auto;
             padding-top: 1.5rem;
         }
-        #gallery {
-            min-height: 22rem;
-            margin-bottom: 15px;
-            margin-left: auto;
-            margin-right: auto;
-            border-bottom-right-radius: .5rem !important;
-            border-bottom-left-radius: .5rem !important;
-        }
-        #gallery>div>.h-full {
-            min-height: 20rem;
-        }
+     
         .details:hover {
             text-decoration: underline;
         }
@@ -139,7 +129,6 @@ with block:
                     label="Input Audio",
                     show_label=False,
                 ).style(
-                    border=(True, False, True, True),
                     rounded=(True, False, False, True),
                     container=False,
                 )
