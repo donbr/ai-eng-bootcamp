@@ -3,7 +3,7 @@ os.system("pip install git+https://github.com/openai/whisper.git")
 import gradio as gr
 import whisper
 
-model = whisper.load_model("base")
+model = whisper.load_model("small")
 
 
         
