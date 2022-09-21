@@ -86,42 +86,6 @@ block = gr.Blocks(css=css)
 
 
 with block:
-    gr.HTML(
-        """
-            <div style="text-align: center; max-width: 650px; margin: 0 auto;">
-              <div
-                style="
-                  display: inline-flex;
-                  gap: 0.8rem;
-                  font-size: 1.75rem;
-                  margin-bottom: 10px;
-                  margin-left: 220px;
-                  justify-content: center;
-                "
-              >
-              <a href="https://github.com/PaddlePaddle/PaddleHub"><img src="https://user-images.githubusercontent.com/22424850/187387422-f6c9ccab-7fda-416e-a24d-7d6084c46f67.jpg" alt="Paddlehub" width="40%"></a>
-              </div> 
-              <div
-                style="
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 0.8rem;
-                  font-size: 1.75rem;
-                  margin-bottom: 10px;
-                  justify-content: center;
-                ">
-              <a href="https://github.com/PaddlePaddle/PaddleHub"><h1 style="font-weight: 900; margin-bottom: 7px;">
-                  ERNIE-ViLG Demo
-              </h1></a>
-              </div> 
-              <p style="margin-bottom: 10px; font-size: 94%">
-                ERNIE-ViLG is a state-of-the-art text-to-image model that generates
-                images from Chinese text.
-              </p>
-              <a href="https://github.com/PaddlePaddle/PaddleHub"><img src="https://user-images.githubusercontent.com/22424850/188184795-98605a22-9af2-4106-827b-e58548f8892f.png" alt="star Paddlehub" width="100%"></a>
-            </div>
-        """
-    )
     with gr.Group():
         with gr.Box():
             with gr.Row().style(mobile_collapse=False, equal_height=True):
