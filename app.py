@@ -1,3 +1,5 @@
+import os
+os.system("pip install git+https://github.com/openai/whisper.git")
 import gradio as gr
 import whisper
 
