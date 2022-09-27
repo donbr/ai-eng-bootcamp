@@ -22,9 +22,7 @@ def inference(audio):
     return result.text
 
 
-title="Whisper"
 
-description="""Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multi-task model that can perform multilingual speech recognition as well as speech translation and language identification. This demo cuts audio after around 30 secs."""
 
 css = """
         .gradio-container {
@@ -143,7 +141,7 @@ with block:
                 </h1>
               </div>
               <p style="margin-bottom: 10px; font-size: 94%">
-                Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multi-task model that can perform multilingual speech recognition as well as speech translation and language identification.
+                Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multi-task model that can perform multilingual speech recognition as well as speech translation and language identification. This demo cuts audio after around 30 secs.
               </p>
             </div>
         """
