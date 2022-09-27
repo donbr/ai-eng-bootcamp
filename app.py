@@ -24,7 +24,7 @@ def inference(audio):
 
 title="Whisper"
 
-description="Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multi-task model that can perform multilingual speech recognition as well as speech translation and language identification."
+description="Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multi-task model that can perform multilingual speech recognition as well as speech translation and language identification. This demo cuts audio after around 25 secs."
 
 css = """
         .gradio-container {
