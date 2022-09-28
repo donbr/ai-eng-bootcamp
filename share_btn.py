@@ -40,9 +40,8 @@ share_js = """async () => {
 
     const res = await fetch(audioEl.src);
     const blob = await res.blob();
-    const audioId = Date.now() % 200;
-    const fileName = `whisper-${{audioId}}.wav`;
-    const audioFile = new File([blob], fileName, { type: 'audio/wav' });
+    const fileName = `whisper-demo-input.webm`;
+    const audioFile = new File([blob], fileName, { type: 'audio/webm' });
 
     const url = await uploadFile(audioFile);
 
