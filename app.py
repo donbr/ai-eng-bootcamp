@@ -3,6 +3,8 @@ os.system("pip install git+https://github.com/openai/whisper.git")
 import gradio as gr
 import whisper
 
+from share_btn import community_icon_html, loading_icon_html, share_js
+
 model = whisper.load_model("small")
 
 
@@ -19,7 +21,7 @@ def inference(audio):
     result = whisper.decode(model, mel, options)
     
     print(result.text)
-    return result.text
+    return result.text, gr.update(visible=True), gr.update(visible=True), gr.update(visible=True)
 
 
 
@@ -84,6 +86,26 @@ css = """
             margin: 1.25em 0 .25em 0;
             font-weight: bold;
             font-size: 115%;
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        #share-btn-container {
+            display: flex; margin-top: 1.5rem !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; background-color: #000000; justify-content: center; align-items: center; border-radius: 9999px !important; width: 13rem;
+        }
+        #share-btn {
+            all: initial; color: #ffffff;font-weight: 600; cursor:pointer; font-family: 'IBM Plex Sans', sans-serif; margin-left: 0.5rem !important; padding-top: 0.25rem !important; padding-bottom: 0.25rem !important;
+        }
+        #share-btn * {
+            all: unset;
         }
 """
 
@@ -157,12 +179,17 @@ with block:
                 )
 
                 btn = gr.Button("Transcribe")
-        text = gr.Textbox(show_label=False)
+        text = gr.Textbox(show_label=False, elem_id="result-textarea")
+        with gr.Group(elem_id="share-btn-container"):
+            community_icon = gr.HTML(community_icon_html, visible=False)
+            loading_icon = gr.HTML(loading_icon_html, visible=False)
+            share_button = gr.Button("Share to community", elem_id="share-btn", visible=False)
         
 
 
         
-        btn.click(inference, inputs=[audio], outputs=[text])
+        btn.click(inference, inputs=[audio], outputs=[text, community_icon, loading_icon, share_button])
+        share_button.click(None, [], [], _js=share_js)
  
         gr.HTML('''
         <div class="footer">
