@@ -187,7 +187,8 @@ share_js = """async () => {
 <audio controls src='${url}'></audio>
 
 #### Transcription:
-${resultTxt}`;
+
+> ${resultTxt}`;
 
     const params = new URLSearchParams({
         description: descriptionMd,
