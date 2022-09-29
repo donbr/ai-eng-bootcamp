@@ -14,13 +14,126 @@ share_js = """async () => {
 		const response = await fetch(UPLOAD_URL, {
 			method: 'POST',
 			headers: {
-				'Content-Type': file.type,
+				'Content-Type': 'audio/wav',
 				'X-Requested-With': 'XMLHttpRequest',
 			},
 			body: file, /// <- File inherits from Blob
 		});
 		const url = await response.text();
 		return url;
+	}
+
+	function audioResample(buffer, sampleRate){
+		const offlineCtx = new OfflineAudioContext(2, (buffer.length / buffer.sampleRate) * sampleRate, sampleRate);
+		const source = offlineCtx.createBufferSource();
+		source.buffer = buffer;
+		source.connect(offlineCtx.destination);
+		source.start();
+		return offlineCtx.startRendering();
+	};
+
+	function audioReduceChannels(buffer, targetChannelOpt){
+		if(targetChannelOpt === 'both' || buffer.numberOfChannels < 2) return buffer;
+		const outBuffer = new AudioBuffer({
+			sampleRate: buffer.sampleRate, 
+			length: buffer.length, 
+			numberOfChannels: 1
+		});
+
+		const data = [buffer.getChannelData(0), buffer.getChannelData(1)];
+		const newData = new Float32Array(buffer.length);
+		for(let i = 0; i < buffer.length; ++i)
+			newData[i] = 
+				targetChannelOpt === 'left'? data[0][i] :
+				targetChannelOpt === 'right'? data[1][i] :
+				(data[0][i] + data[1][i]) / 2 ;
+		outBuffer.copyToChannel(newData, 0);
+		return outBuffer;
+	};
+
+	function audioNormalize(buffer){
+		const data = Array.from(Array(buffer.numberOfChannels)).map((_, idx) => buffer.getChannelData(idx));
+		const maxAmplitude = Math.max(...data.map(chan => chan.reduce((acc, cur) => Math.max(acc, Math.abs(cur)), 0)));
+		if(maxAmplitude >= 1.0) return buffer;
+		const coeff = 1.0 / maxAmplitude;
+		data.forEach(chan => {
+			chan.forEach((v, idx) => chan[idx] = v*coeff);
+			buffer.copyToChannel(chan, 0);
+		});
+		return buffer;
+	};
+
+	async function processAudioFile(
+		audioBufferIn,
+		targetChannelOpt,
+		targetSampleRate
+	) {
+		const resampled = await audioResample(audioBufferIn, targetSampleRate);
+		const reduced = audioReduceChannels(resampled, targetChannelOpt);
+		const normalized = audioNormalize(reduced);
+		return normalized;
+	}
+
+	function audioToRawWave(audioChannels, bytesPerSample, mixChannels=false) {
+		const bufferLength = audioChannels[0].length;
+		const numberOfChannels = audioChannels.length === 1 ? 1 : 2;
+		const reducedData = new Uint8Array(
+			bufferLength * numberOfChannels * bytesPerSample
+		);
+		for (let i = 0; i < bufferLength; ++i) {
+			for (
+				let channel = 0;
+				channel < (mixChannels ? 1 : numberOfChannels);
+				++channel
+			) {
+				const outputIndex = (i * numberOfChannels + channel) * bytesPerSample;
+				let sample;
+				if (!mixChannels) sample = audioChannels[channel][i];
+				else
+					sample =
+						audioChannels.reduce((prv, cur) => prv + cur[i], 0) /
+						numberOfChannels;
+				sample = sample > 1 ? 1 : sample < -1 ? -1 : sample; //check for clipping
+				//bit reduce and convert to Uint8
+				switch (bytesPerSample) {
+					case 2:
+						sample = sample * 32767;
+						reducedData[outputIndex] = sample;
+						reducedData[outputIndex + 1] = sample >> 8;
+						break;
+					case 1:
+						reducedData[outputIndex] = (sample + 1) * 127;
+						break;
+					default:
+						throw "Only 8, 16 bits per sample are supported";
+				}
+			}
+		}
+		return reducedData;
+	}
+
+	function makeWav(data, channels, sampleRate, bytesPerSample) {
+		const headerLength = 44;
+		var wav = new Uint8Array(headerLength + data.length);
+		var view = new DataView(wav.buffer);
+
+		view.setUint32(0, 1380533830, false); // RIFF identifier 'RIFF'
+		view.setUint32(4, 36 + data.length, true); // file length minus RIFF identifier length and file description length
+		view.setUint32(8, 1463899717, false); // RIFF type 'WAVE'
+		view.setUint32(12, 1718449184, false); // format chunk identifier 'fmt '
+		view.setUint32(16, 16, true); // format chunk length
+		view.setUint16(20, 1, true); // sample format (raw)
+		view.setUint16(22, channels, true); // channel count
+		view.setUint32(24, sampleRate, true); // sample rate
+		view.setUint32(28, sampleRate * bytesPerSample * channels, true); // byte rate (sample rate * block align)
+		view.setUint16(32, bytesPerSample * channels, true); // block align (channel count * bytes per sample)
+		view.setUint16(34, bytesPerSample * 8, true); // bits per sample
+		view.setUint32(36, 1684108385, false); // data chunk identifier 'data'
+		view.setUint32(40, data.length, true); // data chunk length
+
+		wav.set(data, headerLength);
+
+		return new Blob([wav.buffer], { type: "audio/wav" });
 	}
 
     const gradioEl = document.querySelector('body > gradio-app');
@@ -40,8 +153,33 @@ share_js = """async () => {
 
     const res = await fetch(audioEl.src);
     const blob = await res.blob();
-    const fileName = `whisper-demo-input.webm`;
-    const audioFile = new File([blob], fileName, { type: 'audio/webm' });
+
+    const channelOpt = "both";
+    const sampleRate = 48000;
+    const bytesPerSample = 1; // or 2
+    const audioBufferIn = await new AudioContext().decodeAudioData(
+        await blob.arrayBuffer()
+    );
+    const audioBuffer = await processAudioFile(
+        audioBufferIn,
+        channelOpt,
+        sampleRate
+    );
+    const rawData = audioToRawWave(
+        channelOpt === "both"
+            ? [audioBuffer.getChannelData(0), audioBuffer.getChannelData(1)]
+            : [audioBuffer.getChannelData(0)],
+        bytesPerSample
+    );
+    const blobWav = makeWav(
+        rawData,
+        channelOpt === "both" ? 2 : 1,
+        sampleRate,
+        bytesPerSample
+    );
+
+    const fileName = `whisper-demo-input.wav`;
+    const audioFile = new File([blobWav], fileName, { type: 'audio/wav' });
 
     const url = await uploadFile(audioFile);
 
