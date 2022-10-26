@@ -195,7 +195,7 @@ share_js = """async () => {
     });
 
 	const paramsStr = params.toString();
-	window.open(`${window.location.href}/discussions/new?${paramsStr}`, '_blank');
+	window.open(`https://huggingface.co/spaces/openai/whisper/discussions/new?${paramsStr}`, '_blank');
 
     shareBtnEl.style.removeProperty('pointer-events');
     shareIconEl.style.removeProperty('display');
