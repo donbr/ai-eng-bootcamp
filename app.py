@@ -165,6 +165,7 @@ with block:
               <p style="margin-bottom: 10px; font-size: 94%">
                 Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multi-task model that can perform multilingual speech recognition as well as speech translation and language identification. This demo cuts audio after around 30 secs.
               </p>
+               <p>You can skip the queue by using google colab for the space: <a href="https://colab.research.google.com/drive/1WJ98KHgZxFGrHiMm4TyWZllSew_Af_ff?usp=sharing"><img data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" src="https://camo.githubusercontent.com/84f0493939e0c4de4e6dbe113251b4bfb5353e57134ffd9fcab6b8714514d4d1/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667"></a></p>
             </div>
         """
     )
