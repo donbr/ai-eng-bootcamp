@@ -1,202 +1,151 @@
-import os
-os.system("pip install git+https://github.com/openai/whisper.git")
+import torch
+
 import gradio as gr
-import whisper
+import yt_dlp as youtube_dl
+from transformers import pipeline
+from transformers.pipelines.audio_utils import ffmpeg_read
 
-from share_btn import community_icon_html, loading_icon_html, share_js
+import tempfile
+import os
 
-model = whisper.load_model("small")
+MODEL_NAME = "openai/whisper-large-v3"
+BATCH_SIZE = 8
+FILE_LIMIT_MB = 1000
+YT_LENGTH_LIMIT_S = 3600  # limit to 1 hour YouTube files
 
+device = 0 if torch.cuda.is_available() else "cpu"
 
-        
-def inference(audio):
-    audio = whisper.load_audio(audio)
-    audio = whisper.pad_or_trim(audio)
-    
-    mel = whisper.log_mel_spectrogram(audio).to(model.device)
-    
-    _, probs = model.detect_language(mel)
-    
-    options = whisper.DecodingOptions(fp16 = False)
-    result = whisper.decode(model, mel, options)
-    
-    print(result.text)
-    return result.text, gr.update(visible=True), gr.update(visible=True), gr.update(visible=True)
-
+pipe = pipeline(
+    task="automatic-speech-recognition",
+    model=MODEL_NAME,
+    chunk_length_s=30,
+    device=device,
+)
 
 
+def transcribe(inputs, task):
+    if inputs is None:
+        raise gr.Error("No audio file submitted! Please upload or record an audio file before submitting your request.")
 
-css = """
-        .gradio-container {
-            font-family: 'IBM Plex Sans', sans-serif;
-        }
-        .gr-button {
-            color: white;
-            border-color: black;
-            background: black;
-        }
-        input[type='range'] {
-            accent-color: black;
-        }
-        .dark input[type='range'] {
-            accent-color: #dfdfdf;
-        }
-        .container {
-            max-width: 730px;
-            margin: auto;
-            padding-top: 1.5rem;
-        }
-     
-        .details:hover {
-            text-decoration: underline;
-        }
-        .gr-button {
-            white-space: nowrap;
-        }
-        .gr-button:focus {
-            border-color: rgb(147 197 253 / var(--tw-border-opacity));
-            outline: none;
-            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-            --tw-border-opacity: 1;
-            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px var(--tw-ring-offset-width)) var(--tw-ring-color);
-            --tw-ring-color: rgb(191 219 254 / var(--tw-ring-opacity));
-            --tw-ring-opacity: .5;
-        }
-        .footer {
-            margin-bottom: 45px;
-            margin-top: 35px;
-            text-align: center;
-            border-bottom: 1px solid #e5e5e5;
-        }
-        .footer>p {
-            font-size: .8rem;
-            display: inline-block;
-            padding: 0 10px;
-            transform: translateY(10px);
-            background: white;
-        }
-        .dark .footer {
-            border-color: #303030;
-        }
-        .dark .footer>p {
-            background: #0b0f19;
-        }
-        .prompt h4{
-            margin: 1.25em 0 .25em 0;
-            font-weight: bold;
-            font-size: 115%;
-        }
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        #share-btn-container {
-            display: flex; margin-top: 1.5rem !important; padding-left: 0.5rem !important; padding-right: 0.5rem !important; background-color: #000000; justify-content: center; align-items: center; border-radius: 9999px !important; width: 13rem;
-        }
-        #share-btn {
-            all: initial; color: #ffffff;font-weight: 600; cursor:pointer; font-family: 'IBM Plex Sans', sans-serif; margin-left: 0.5rem !important; padding-top: 0.25rem !important; padding-bottom: 0.25rem !important;
-        }
-        #share-btn * {
-            all: unset;
-        }
-"""
-
-block = gr.Blocks(css=css)
+    text = pipe(inputs, batch_size=BATCH_SIZE, generate_kwargs={"task": task}, return_timestamps=True)["text"]
+    return  text
 
 
-
-with block:
-    gr.HTML(
-        """
-            <div style="text-align: center; max-width: 650px; margin: 0 auto;">
-              <div
-                style="
-                  display: inline-flex;
-                  align-items: center;
-                  gap: 0.8rem;
-                  font-size: 1.75rem;
-                "
-              >
-                <svg
-                  width="0.65em"
-                  height="0.65em"
-                  viewBox="0 0 115 115"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect width="23" height="23" fill="white"></rect>
-                  <rect y="69" width="23" height="23" fill="white"></rect>
-                  <rect x="23" width="23" height="23" fill="#AEAEAE"></rect>
-                  <rect x="23" y="69" width="23" height="23" fill="#AEAEAE"></rect>
-                  <rect x="46" width="23" height="23" fill="white"></rect>
-                  <rect x="46" y="69" width="23" height="23" fill="white"></rect>
-                  <rect x="69" width="23" height="23" fill="black"></rect>
-                  <rect x="69" y="69" width="23" height="23" fill="black"></rect>
-                  <rect x="92" width="23" height="23" fill="#D9D9D9"></rect>
-                  <rect x="92" y="69" width="23" height="23" fill="#AEAEAE"></rect>
-                  <rect x="115" y="46" width="23" height="23" fill="white"></rect>
-                  <rect x="115" y="115" width="23" height="23" fill="white"></rect>
-                  <rect x="115" y="69" width="23" height="23" fill="#D9D9D9"></rect>
-                  <rect x="92" y="46" width="23" height="23" fill="#AEAEAE"></rect>
-                  <rect x="92" y="115" width="23" height="23" fill="#AEAEAE"></rect>
-                  <rect x="92" y="69" width="23" height="23" fill="white"></rect>
-                  <rect x="69" y="46" width="23" height="23" fill="white"></rect>
-                  <rect x="69" y="115" width="23" height="23" fill="white"></rect>
-                  <rect x="69" y="69" width="23" height="23" fill="#D9D9D9"></rect>
-                  <rect x="46" y="46" width="23" height="23" fill="black"></rect>
-                  <rect x="46" y="115" width="23" height="23" fill="black"></rect>
-                  <rect x="46" y="69" width="23" height="23" fill="black"></rect>
-                  <rect x="23" y="46" width="23" height="23" fill="#D9D9D9"></rect>
-                  <rect x="23" y="115" width="23" height="23" fill="#AEAEAE"></rect>
-                  <rect x="23" y="69" width="23" height="23" fill="black"></rect>
-                </svg>
-                <h1 style="font-weight: 900; margin-bottom: 7px;">
-                  Whisper
-                </h1>
-              </div>
-              <p style="margin-bottom: 10px; font-size: 94%">
-                Whisper is a general-purpose speech recognition model. It is trained on a large dataset of diverse audio and is also a multi-task model that can perform multilingual speech recognition as well as speech translation and language identification. This demo cuts audio after around 30 secs.
-              </p>
-               <p>You can skip the queue by using google colab for the space: <a href="https://colab.research.google.com/drive/1WJ98KHgZxFGrHiMm4TyWZllSew_Af_ff?usp=sharing"><img data-canonical-src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" src="https://camo.githubusercontent.com/84f0493939e0c4de4e6dbe113251b4bfb5353e57134ffd9fcab6b8714514d4d1/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667"></a></p>
-            </div>
-        """
+def _return_yt_html_embed(yt_url):
+    video_id = yt_url.split("?v=")[-1]
+    HTML_str = (
+        f'<center> <iframe width="500" height="320" src="https://www.youtube.com/embed/{video_id}"> </iframe>'
+        " </center>"
     )
-    with gr.Group():
-        with gr.Box():
-            with gr.Row().style(mobile_collapse=False, equal_height=True):
-                audio = gr.Audio(
-                    label="Input Audio",
-                    show_label=False,
-                    source="microphone",
-                    type="filepath"
-                )
+    return HTML_str
 
-                btn = gr.Button("Transcribe")
-        text = gr.Textbox(show_label=False, elem_id="result-textarea")
-        with gr.Group(elem_id="share-btn-container"):
-            community_icon = gr.HTML(community_icon_html, visible=False)
-            loading_icon = gr.HTML(loading_icon_html, visible=False)
-            share_button = gr.Button("Share to community", elem_id="share-btn", visible=False)
-        
+def download_yt_audio(yt_url, filename):
+    info_loader = youtube_dl.YoutubeDL()
+    
+    try:
+        info = info_loader.extract_info(yt_url, download=False)
+    except youtube_dl.utils.DownloadError as err:
+        raise gr.Error(str(err))
+    
+    file_length = info["duration_string"]
+    file_h_m_s = file_length.split(":")
+    file_h_m_s = [int(sub_length) for sub_length in file_h_m_s]
+    
+    if len(file_h_m_s) == 1:
+        file_h_m_s.insert(0, 0)
+    if len(file_h_m_s) == 2:
+        file_h_m_s.insert(0, 0)
+    file_length_s = file_h_m_s[0] * 3600 + file_h_m_s[1] * 60 + file_h_m_s[2]
+    
+    if file_length_s > YT_LENGTH_LIMIT_S:
+        yt_length_limit_hms = time.strftime("%HH:%MM:%SS", time.gmtime(YT_LENGTH_LIMIT_S))
+        file_length_hms = time.strftime("%HH:%MM:%SS", time.gmtime(file_length_s))
+        raise gr.Error(f"Maximum YouTube length is {yt_length_limit_hms}, got {file_length_hms} YouTube video.")
+    
+    ydl_opts = {"outtmpl": filename, "format": "worstvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"}
+    
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        try:
+            ydl.download([yt_url])
+        except youtube_dl.utils.ExtractorError as err:
+            raise gr.Error(str(err))
 
 
-        
-        btn.click(inference, inputs=[audio], outputs=[text, community_icon, loading_icon, share_button])
-        share_button.click(None, [], [], _js=share_js)
- 
-        gr.HTML('''
-        <div class="footer">
-                    <p>Model by <a href="https://github.com/openai/whisper" style="text-decoration: underline;" target="_blank">OpenAI</a> - Gradio Demo by 🤗 Hugging Face
-                    </p>
-        </div>
-        ''')
+def yt_transcribe(yt_url, task, max_filesize=75.0):
+    html_embed_str = _return_yt_html_embed(yt_url)
 
-block.launch()
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        filepath = os.path.join(tmpdirname, "video.mp4")
+        download_yt_audio(yt_url, filepath)
+        with open(filepath, "rb") as f:
+            inputs = f.read()
+
+    inputs = ffmpeg_read(inputs, pipe.feature_extractor.sampling_rate)
+    inputs = {"array": inputs, "sampling_rate": pipe.feature_extractor.sampling_rate}
+
+    text = pipe(inputs, batch_size=BATCH_SIZE, generate_kwargs={"task": task}, return_timestamps=True)["text"]
+
+    return html_embed_str, text
+
+
+demo = gr.Blocks()
+
+mf_transcribe = gr.Interface(
+    fn=transcribe,
+    inputs=[
+        gr.inputs.Audio(source="microphone", type="filepath", optional=True),
+        gr.inputs.Radio(["transcribe", "translate"], label="Task", default="transcribe"),
+    ],
+    outputs="text",
+    layout="horizontal",
+    theme="huggingface",
+    title="Whisper Large V3: Transcribe Audio",
+    description=(
+        "Transcribe long-form microphone or audio inputs with the click of a button! Demo uses the OpenAI Whisper"
+        f" checkpoint [{MODEL_NAME}](https://huggingface.co/{MODEL_NAME}) and 🤗 Transformers to transcribe audio files"
+        " of arbitrary length."
+    ),
+    allow_flagging="never",
+)
+
+file_transcribe = gr.Interface(
+    fn=transcribe,
+    inputs=[
+        gr.inputs.Audio(source="upload", type="filepath", optional=True, label="Audio file"),
+        gr.inputs.Radio(["transcribe", "translate"], label="Task", default="transcribe"),
+    ],
+    outputs="text",
+    layout="horizontal",
+    theme="huggingface",
+    title="Whisper Large V3: Transcribe Audio",
+    description=(
+        "Transcribe long-form microphone or audio inputs with the click of a button! Demo uses the OpenAI Whisper"
+        f" checkpoint [{MODEL_NAME}](https://huggingface.co/{MODEL_NAME}) and 🤗 Transformers to transcribe audio files"
+        " of arbitrary length."
+    ),
+    allow_flagging="never",
+)
+
+yt_transcribe = gr.Interface(
+    fn=yt_transcribe,
+    inputs=[
+        gr.inputs.Textbox(lines=1, placeholder="Paste the URL to a YouTube video here", label="YouTube URL"),
+        gr.inputs.Radio(["transcribe", "translate"], label="Task", default="transcribe")
+    ],
+    outputs=["html", "text"],
+    layout="horizontal",
+    theme="huggingface",
+    title="Whisper Large V3: Transcribe YouTube",
+    description=(
+        "Transcribe long-form YouTube videos with the click of a button! Demo uses the OpenAI Whisper checkpoint"
+        f" [{MODEL_NAME}](https://huggingface.co/{MODEL_NAME}) and 🤗 Transformers to transcribe video files of"
+        " arbitrary length."
+    ),
+    allow_flagging="never",
+)
+
+with demo:
+    gr.TabbedInterface([mf_transcribe, file_transcribe, yt_transcribe], ["Microphone", "Audio file", "YouTube"])
+
+demo.launch(enable_queue=True)
+
