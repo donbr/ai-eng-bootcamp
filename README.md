@@ -1,12 +1,5 @@
----
-title: Whisper
-emoji: 📉
-colorFrom: pink
-colorTo: yellow
-sdk: gradio
-sdk_version: 3.38.0
-app_file: app.py
-pinned: false
----
+# AI Engineering Bootcamp
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+- captures notebooks used for AI Engineering Bootcamps
+- captures presentation decks in PDF format
+- whisper generated transcripts for YouTube videos
