@@ -1,24 +1,16 @@
-# Training breakdown
+# Bootcamp
 
-
-
-Colab Notebook: https://colab.research.google.com/drive/1NwwPKYlyOIxeRI1BBUMZ-uFIApyZxARy?usp=sharing
-
-Slide Link: https://www.canva.com/design/DAFy31ZLJsA/h36gP_adzG-_H0_pe_npaw/edit?utm_content=DAFy31ZLJsA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
-
-
-
-# Pre-Course Content!
+## Pre-Course Content!
 
 Getting rooted (or at least reminded) of some fundamentals of LLMs is a great move to take right now.  It is exactly these background areas that we will ***not** have time for* in our journey together.
 
 [Building with Pre-Trained BART, BERT, and GPT-Style LLMs](https://www.youtube.com/live/U6D6a6NAJ2M?si=2v9DNraiqiKdSbbG)
-
-[Colab Notebook](https://colab.research.google.com/drive/1NwwPKYlyOIxeRI1BBUMZ-uFIApyZxARy?usp=sharing)
-
-[Slide Link](https://www.canva.com/design/DAFy31ZLJsA/h36gP_adzG-_H0_pe_npaw/edit?utm_content=DAFy31ZLJsA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+- [Colab Notebook](https://colab.research.google.com/drive/1NwwPKYlyOIxeRI1BBUMZ-uFIApyZxARy?usp=sharing)
+- [Slide Link](https://www.canva.com/design/DAFy31ZLJsA/h36gP_adzG-_H0_pe_npaw/edit?utm_content=DAFy31ZLJsA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 [The Attention Mechanism in GPTs](https://www.youtube.com/live/bcOA9rD55t8?si=EwGcreffIRuqU38H)
+- [Google Colab Notebook](https://colab.research.google.com/drive/1TcJigIU5iMVJmFVvHYZpY3AQzpJWi0P8?usp=sharing)
+- [Slides](https://www.canva.com/design/DAF6XLtoV58/Qb8bwRffZLX6-wKh9nDEjQ/edit?utm_content=DAF6XLtoV58&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 For a deeper dive into Transformers, check out [The Lego Blocks of Transformers](https://www.youtube.com/live/vZvGDrlUByw?si=k_6cK68YupSV--cc)
 
@@ -31,7 +23,7 @@ Additionally, we recommend you check out a [fine-tuning](https://www.youtube.com
 
 [RAG, Fine-Tuning, and Agents: The Three Key Patterns of Generative AI](https://youtu.be/ew4cXDqzb3o?si=OWA4FF1D3UGdPtA-)
 
-# 🛣️ Planning Your Project
+## 🛣️ Planning Your Project
 
 One of the most important things you can start doing now is to get some ideas about what you want to build, ship, and share by the end of the cohort!
 
@@ -46,7 +38,7 @@ It starts with two questions:
 
 From this information, it will automatically generate ideas for you and deliver a customized Build-Ship-Share Report!
 
-# Week 1: 🧑‍💻 GPTs | 🚀 First LLM
+## Week 1: 🧑‍💻 GPTs | 🚀 First LLM
 
 ## **Session 1: Understanding GPTs and Prototyping Simple LLM Applications**
 
@@ -84,7 +76,7 @@ And finally, watch
 
 [🧑‍💻🚀 Deploy Your First LLM Application with OpenAI, Chainlit, Docker, and Hugging Face](https://youtu.be/vP2JSAZLnRk?si=DKGjyiE0jihW8ApF)
 
-# Week 2: 📇 First RAG | 🕴️ First Agent
+## Week 2: 📇 First RAG | 🕴️ First Agent
 
 ## **Session 3: Retrieval Augmented Generation (RAG) for Question Answering**
 
@@ -108,7 +100,7 @@ Watch *(~*20 min)
     [Google Colaboratory](https://colab.research.google.com/drive/1kfYx1xy8gPrURkrrK-2u-yBIAeF8EA9w?usp=sharing)
     
 
-# Week 3: ⚖️ First Fine-Tuning | ⛓️ LangChain RAG
+## Week 3: ⚖️ First Fine-Tuning | ⛓️ LangChain RAG
 
 ## **Session 5: Fine-Tuning Embedding Models**
 
@@ -140,7 +132,7 @@ Watch
     [Google Colaboratory](https://colab.research.google.com/drive/1Q-lm-apSJRYwoPvUZGiwYMezeky0yQXD?usp=sharing)
     
 
-# Week 4: 🚀 Prototyping RAG Apps | 📐 RAG Eval
+## Week 4: 🚀 Prototyping RAG Apps | 📐 RAG Eval
 
 ## Session 7: Prototyping End-to-End RAG
 
@@ -170,7 +162,7 @@ Watch
         [Google Colaboratory](https://colab.research.google.com/drive/1C1Epju1lVkXTQi2jBq1njrOrmkfg0eQS?usp=sharing)
         
 
-# Week 5: 🦙 LlamaIndex RAG | 🚢 Prod RAG Apps
+## Week 5: 🦙 LlamaIndex RAG | 🚢 Prod RAG Apps
 
 ## **Session 9: Complex RAG with LlamaIndex**
 
@@ -199,7 +191,7 @@ Watch
     [Google Colab](https://colab.research.google.com/drive/1TiuuqZvoj4boJbGuOehWKMgrpO-3J9EC?usp=sharing)
     
 
-# Week 6: ⚖️ Fine-Tuning LLMs | 🤖 Agentic RAG
+## Week 6: ⚖️ Fine-Tuning LLMs | 🤖 Agentic RAG
 
 ## Session 11: Fine-Tuning Open-Source LLMs
 
@@ -237,7 +229,7 @@ LangGraph and OpenGPTs
     [Google Colab](https://colab.research.google.com/drive/1OfC61Y5Bl3RhckHNQmMQycdOtBmFy7nP?usp=sharing)
     
 
-# Week 7: 🧑‍💻 Hack Week
+## Week 7: 🧑‍💻 Hack Week
 
 ## **Session 13: Industry Use Cases & Fine-Tuning Embeddings**
 
@@ -251,7 +243,7 @@ Please use the Build-Ship-Share GPT to come up with a few project ideas!
 
 [LinkedIn Event from AIE2](https://www.linkedin.com/company/95720518/admin/dashboard/?viewEvents=true)
 
-# Week 8: 🤩 Demo Day
+## Week 8: 🤩 Demo Day
 
 ### **Session 15: AI Makerspace Demo Day & Graduation!**
 
